@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gestion du temps</title>
+<title>ctmTIME</title>
 <meta name="description" content="Où va ta semaine, et ta pratique d'ici la fin de la session. Gratuit, hors ligne, rien n'est envoyé.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icones/favicon-32.png">
 <link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Gestion du temps">
+<meta name="apple-mobile-web-app-title" content="ctmTIME">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#0f6f68">
 <meta name="author" content="Charles Trudel">
@@ -403,7 +403,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
   <header class="top">
     <div class="brand">
       <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="20" cy="20" r="17" fill="none" stroke="var(--accent)" stroke-width="6" stroke-dasharray="70 107" transform="rotate(-90 20 20)" stroke-linecap="round"/><circle cx="20" cy="20" r="17" fill="none" stroke="var(--c-mus)" stroke-width="6" stroke-dasharray="18 107" stroke-dashoffset="-76" transform="rotate(-90 20 20)" stroke-linecap="round"/></svg>
-      <div><h1>Gestion du temps</h1><p>Où va ta semaine, et combien d'heures d'ici la fin de la session ?</p></div>
+      <div><h1>ctmTIME</h1><p>Gestion du temps · Où va ta semaine, et combien d'heures d'ici la fin de la session ?</p></div>
     </div>
     <div class="entete-act">
       <button class="btn primary" id="b-envoyer" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Envoyer</button>
@@ -555,7 +555,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
   <footer class="pied">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
     Tes données restent sur cet appareil. Rien n'est envoyé.
-    <span class="copy">© 2026 Charles Trudel · Tous droits réservés</span>
+    <span class="copy">ctmTIME · ctmLAB · © 2026 Charles Trudel · Tous droits réservés</span>
   </footer>
 </div>
 <dialog id="envoi" aria-labelledby="envoi-t">
@@ -1214,7 +1214,7 @@ function txtObjectifs() {
 }
 function entete() {
   const n = jours();
-  return `# Gestion du temps${S.nom ? ' : ' + S.nom : ''}\nDate : ${dLong(AUJ)} · Fin de la période : ${dateFin(true)} (${n} jours, ${nf(n / 7, 1)} semaines)`;
+  return `# ctmTIME : gestion du temps${S.nom ? ' : ' + S.nom : ''}\nDate : ${dLong(AUJ)} · Fin de la période : ${dateFin(true)} (${n} jours, ${nf(n / 7, 1)} semaines)`;
 }
 function resume(quoi) {
   const P = [entete()];
@@ -1246,10 +1246,10 @@ function ouvrirEnvoi(quoi) {
 function imprimer(quoi) {
   document.body.classList.remove('imp-pratique', 'imp-semaine', 'imp-tout');
   document.body.classList.add('imp-' + quoi);
-  $('imp-tete').innerHTML = `<span><b>${esc(S.nom || 'Gestion du temps')}</b> · ${NOMS_QUOI[quoi]}</span><span>${dLong(AUJ)} · fin de la période : ${dateFin(true)}</span>`;
+  $('imp-tete').innerHTML = `<span><b>${esc(S.nom || 'ctmTIME')}</b> · ${NOMS_QUOI[quoi]}</span><span>${dLong(AUJ)} · fin de la période : ${dateFin(true)}</span>`;
   document.querySelectorAll('details.cat, #hist').forEach(d => d.open = true);
   const ancien = document.title;
-  document.title = `Gestion du temps - ${S.nom || 'eleve'} - ${NOMS_QUOI[quoi]} - ${iso(AUJ)}`;
+  document.title = `ctmTIME - ${S.nom || 'eleve'} - ${NOMS_QUOI[quoi]} - ${iso(AUJ)}`;
   $('envoi').close && $('envoi').open && $('envoi').close();
   setTimeout(() => { window.print(); document.title = ancien; }, 60);
 }
@@ -1260,7 +1260,7 @@ $('b-pdf2').addEventListener('click', () => imprimer(quoiChoisi()));
 $('b-partager').addEventListener('click', async () => {
   const quoi = quoiChoisi(), t = resume(quoi);
   if (navigator.share) {
-    try { await navigator.share({ title: `Gestion du temps : ${NOMS_QUOI[quoi]}`, text: t }); } catch (e) {}
+    try { await navigator.share({ title: `ctmTIME : ${NOMS_QUOI[quoi]}`, text: t }); } catch (e) {}
   } else copier(t, 'Résumé copié. Colle-le dans un courriel.');
 });
 $('b-ia').addEventListener('click', () => copier(texteIA(), 'Copié. Colle-le dans ChatGPT, Claude ou Gemini.'));
@@ -1270,7 +1270,7 @@ $('b-pdf').addEventListener('click', () => ouvrirEnvoi('tout'));
 $('b-export').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' });
   const lien = document.createElement('a');
-  lien.href = URL.createObjectURL(blob); lien.download = `gestion-du-temps-${iso(AUJ)}.json`;
+  lien.href = URL.createObjectURL(blob); lien.download = `ctmTIME-${iso(AUJ)}.json`;
   document.body.appendChild(lien); lien.click(); lien.remove();
   setTimeout(() => URL.revokeObjectURL(lien.href), 2000);
   S.sauve = iso(AUJ); sauver(); rendreRappel();
@@ -1285,7 +1285,7 @@ $('f-import').addEventListener('change', e => {
       const d = JSON.parse(r.result);
       if (!d || !Array.isArray(d.cats)) throw 0;
       S = d; S.exemple = false; sauver(); demarrer(); toast('Fichier ouvert.');
-    } catch (err) { toast("Ce fichier ne vient pas de Gestion du temps."); }
+    } catch (err) { toast("Ce fichier ne vient pas de ctmTIME."); }
     e.target.value = '';
   };
   r.readAsText(f);

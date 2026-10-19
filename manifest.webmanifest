@@ -1,7 +1,7 @@
 {
-  "name": "Gestion du temps",
-  "short_name": "Gestion du temps",
-  "description": "Où va ta semaine, et ta pratique d'ici la fin de la session.",
+  "name": "ctmTIME",
+  "short_name": "ctmTIME",
+  "description": "Gestion du temps : où va ta semaine, et ta pratique d'ici la fin de la session.",
   "lang": "fr-CA",
   "start_url": "./",
   "scope": "./",

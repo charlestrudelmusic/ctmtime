@@ -1,5 +1,6 @@
-# Gestion du temps
+# ctmTIME (famille ctmLAB)
 
+Gestion du temps. 
 Outil web pour les élèves : où va leur semaine, et leur pratique d'ici la fin de la session.
 Un seul fichier (`index.html`), hors ligne, sans compte. Les données restent dans l'appareil de l'élève ; rien n'est envoyé.
 

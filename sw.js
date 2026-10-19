@@ -1,4 +1,4 @@
-/* Gestion du temps : fonctionnement hors ligne.
+/* ctmTIME : fonctionnement hors ligne.
    La page est d'abord demandée au réseau (pour recevoir les mises à jour),
    puis à la copie gardée sur l'appareil si Internet ne répond pas.
    Changer VERSION à chaque mise en ligne. */
