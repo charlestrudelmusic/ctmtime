@@ -365,6 +365,9 @@ dialog#accueil::backdrop,dialog#install::backdrop{background:rgb(10 15 25 / .45)
 .etapes{background:var(--surface-2);border-radius:12px;padding:12px 14px}
 .etapes ol{margin:8px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px}
 .icone{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--surface);color:var(--accent);vertical-align:middle}
+.suivi{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.suivi a.btn{text-decoration:none;color:var(--surface)}
+.suivi .champ{flex:1 1 260px;width:auto}
 .bas-cat{display:flex;gap:8px;margin:4px 8px 0}
 .bas-cat .ajout{margin:0;width:auto;flex:1}
 .bas-cat .raz{flex:none}
@@ -383,7 +386,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{
   body{background:#fff;padding:0}
-  nav.onglets,.ajout,.suppr,.duree button,.aide,.toast,.exemple,.outils,.entete-act,.semnav .fl,.info,.bas-cat,.raz-page,.rappel,dialog,#sem-raz,.semnav .sous{display:none!important}
+  nav.onglets,.ajout,.suppr,.duree button,.aide,.toast,.exemple,.outils,.entete-act,.semnav .fl,.info,.bas-cat,.raz-page,.rappel,.suivi,dialog,#sem-raz,.semnav .sous{display:none!important}
   body.imp-pratique #p-semaine,body.imp-pratique #p-bilan,body.imp-pratique #p-objectifs,body.imp-pratique .periode,body.imp-semaine #p-pratique{display:none!important}
   .imp-tete{display:flex!important;justify-content:space-between;align-items:baseline;border-bottom:2px solid #000;padding-bottom:6px;font-size:13px}
   .imp-tete b{font-size:18px}
@@ -485,6 +488,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
     </div>
 
     <div class="card">
+      <div class="suivi" id="suivi"></div>
       <div class="semnav">
         <div><div class="t num" id="sem-titre"></div><div class="sous">1 case = 15 minutes. Touche la dernière case faite ; touche-la encore pour l'enlever.</div></div>
         <div class="fl">
@@ -1033,7 +1037,32 @@ function rendreHist(vals, o) {
       <td><b>${fmt(v.t)}</b></td><td>${v.t >= o ? '<span class="ok">Atteint</span>' : v.cur ? 'en cours' : `−${fmt(o - v.t)}`}</td></tr>`).join('')}
   </tbody></table>`;
 }
-function rendrePratique() { rendreNiveaux(); rendreGrille(); rendreGraphe(); }
+/* Lien vers le suivi de cours (OneDrive…), entré une seule fois */
+let suiviEdit = false;
+const ICO_DOC = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 14h6M9 17h4"/></svg>';
+function rendreSuivi() {
+  const el = $('suivi'), u = S.suiviUrl;
+  if (suiviEdit) {
+    el.innerHTML = `<input class="champ" id="suivi-url" type="url" inputmode="url" placeholder="Colle ici le lien OneDrive de ton suivi" value="${esc(u || '')}" aria-label="Lien de mon suivi de cours">
+      <button class="btn primary" type="button" data-a="suivi-ok">Enregistrer</button>
+      ${u ? '<button class="btn ghost" type="button" data-a="suivi-retirer">Retirer</button>' : ''}
+      <button class="btn ghost" type="button" data-a="suivi-non">Annuler</button>`;
+    $('suivi-url').focus();
+  } else if (u) {
+    el.innerHTML = `<a class="btn primary" href="${esc(u)}" target="_blank" rel="noopener">${ICO_DOC}Mon suivi de cours</a>
+      <span class="sous">Ouvre le dernier suivi de ton prof.</span>
+      <button class="lien" type="button" data-a="suivi-mod" style="margin-left:auto">Modifier le lien</button>`;
+  } else {
+    el.innerHTML = `<button class="btn" type="button" data-a="suivi-mod">${ICO_DOC}Ajouter le lien de mon suivi de cours</button>
+      <span class="sous">Le lien OneDrive (ou autre) que ton prof t'a donné. Une seule fois.</span>`;
+  }
+}
+function enregistrerSuivi() {
+  const v = $('suivi-url').value.trim();
+  if (!/^https:\/\/\S+$/i.test(v)) { toast('Colle un lien qui commence par https://'); return; }
+  S.suiviUrl = v; suiviEdit = false; modifie(); rendreSuivi(); toast('Lien enregistré.');
+}
+function rendrePratique() { rendreSuivi(); rendreNiveaux(); rendreGrille(); rendreGraphe(); }
 
 /* ================= Tout ================= */
 function toutRendre() {
@@ -1094,6 +1123,10 @@ document.addEventListener('click', e => {
       razAttente = ci; rendreCats();
       razMinuterie = setTimeout(() => { razAttente = null; rendreCats(); }, 4000);
     }
+  } else if (act === 'suivi-mod') { suiviEdit = true; rendreSuivi();
+  } else if (act === 'suivi-non') { suiviEdit = false; rendreSuivi();
+  } else if (act === 'suivi-ok') { enregistrerSuivi();
+  } else if (act === 'suivi-retirer') { delete S.suiviUrl; suiviEdit = false; modifie(); rendreSuivi();
   } else if (act === 'trans') {
     S.trans = +b.dataset.v; modifie(); toutRendre();
   } else if (act === 'niv') {
@@ -1118,6 +1151,7 @@ document.addEventListener('keydown', e => {
       poser(k, item(k).min + (e.key === 'ArrowUp' ? 15 : -15));
     } else if (e.key === 'Escape') { t.value = fmt(item(t.closest('.duree').dataset.k).min); t.blur(); }
   } else if (t.id.startsWith('n-') && e.key === 'Enter') t.blur();
+  else if (t.id === 'suivi-url') { if (e.key === 'Enter') { e.preventDefault(); enregistrerSuivi(); } else if (e.key === 'Escape') { suiviEdit = false; rendreSuivi(); } }
 });
 function valider(e) {
   const t = e.target;
