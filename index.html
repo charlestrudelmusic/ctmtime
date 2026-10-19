@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gestion du temps</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Où va ta semaine, et ta pratique d'ici la fin de la session. Gratuit, hors ligne, rien n'est envoyé.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icones/favicon-32.png">
+<link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gestion du temps">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#0f6f68">
 <meta name="author" content="Charles Trudel">
 <!-- © 2026 Charles Trudel. Tous droits réservés. -->
@@ -1420,6 +1427,10 @@ appliquerTheme();
 montrer(onglet);
 demarrer();
 if (premiereFois && !S.accueilVu) ouvrirAccueil();
+
+/* Hors ligne : seulement quand la page est en ligne (pas en fichier local) */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
+  navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
 </html>
