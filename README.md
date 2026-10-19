@@ -10,7 +10,9 @@ Un seul fichier (`index.html`), hors ligne, sans compte. Les données restent da
 
 En ligne : https://charlestrudelmusic.github.io/ctmtime/ (GitHub Pages, branche `main`).
 
-Publier une mise à jour : changer `VERSION` dans `sw.js`, commit, puis `git push`. Les élèves la reçoivent à la prochaine ouverture avec Internet (fermer et rouvrir l'app).
+Liens par groupe (même app, adresse différente) : `…/ctmtime/joliette/`, `…/ctmtime/mv/`, et `…/ctmtime/` pour le public. Les dossiers `joliette/` et `mv/` sont **générés** par `python3 scripts/groupes.py` à partir de `index.html` (ne pas les modifier à la main). Codes QR : `partage/`.
+
+Publier une mise à jour : `python3 scripts/groupes.py`, changer `VERSION` dans `sw.js`, commit, puis `git push`. Les élèves la reçoivent à la prochaine ouverture avec Internet (fermer et rouvrir l'app).
 
 Tester sur l'ordi : `python3 -m http.server 8765` dans ce dossier, puis http://localhost:8765.
 

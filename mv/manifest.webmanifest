@@ -1,0 +1,31 @@
+{
+  "name": "ctmTIME",
+  "short_name": "ctmTIME",
+  "description": "Gestion du temps : où va ta semaine, et ta pratique d'ici la fin de la session.",
+  "lang": "fr-CA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0f6f68",
+  "icons": [
+    {
+      "src": "../icones/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icones/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icones/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
