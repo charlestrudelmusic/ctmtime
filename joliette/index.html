@@ -66,7 +66,8 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,button,input,select,a,label,.case{touch-action:manipulation}
+html,button,input,select,a,label{touch-action:manipulation}
+.cases,.cases .case{touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 var(--f-body);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -547,7 +548,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
     <div class="card">
       <div class="semnav">
         <button class="rond" type="button" id="sem-prec" aria-label="Semaine précédente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
-        <div class="sn-t"><div class="t num" id="sem-titre"></div><div class="sous">1 case = 15 min · touche-la encore pour l'enlever</div>
+        <div class="sn-t"><div class="t num" id="sem-titre"></div><div class="sous">1 case = 15 min · touche une case, ou glisse le doigt sur la ligne</div>
           <button class="lien" type="button" id="sem-auj" hidden>Revenir à cette semaine</button></div>
         <button class="rond" type="button" id="sem-suiv" aria-label="Semaine suivante"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
       </div>
@@ -1281,6 +1282,7 @@ document.addEventListener('click', e => {
   } else if (act === 'jours') {
     S.prat.jours = +b.dataset.j; modifie(); rendrePratique();
   } else if (act === 'case') {
+    if (glisse.ignorerClic) return;
     const k = b.dataset.d, v = +b.dataset.p * 15, cur = S.log[k] || 0;
     const nv = cur === v ? v - 15 : v;
     if (nv) S.log[k] = nv; else delete S.log[k];
@@ -1342,6 +1344,49 @@ $('dep-res').addEventListener('click', e => {
   toast(`${fmt(m)} par jour déplacées vers « ${vers.nom} ».`);
   S.dep.min = 0; modifie(); toutRendre();
 });
+/* Glisser le doigt (ou la souris) sur la ligne d'un jour : les cases se remplissent jusqu'au doigt.
+   Tout à gauche = 0. Un glissement vertical fait défiler la page comme d'habitude. */
+const glisse = { etat: null, ignorerClic: false };
+function valeurSous(rangee, x) {
+  let n = 0;
+  rangee.querySelectorAll('.case').forEach(c => { const r = c.getBoundingClientRect(); if (r.left + r.width / 2 <= x) n = Math.max(n, +c.dataset.p); });
+  return n * 15;
+}
+function montrerValeur(rangee, v) {
+  rangee.querySelectorAll('.case').forEach(c => { const on = +c.dataset.p * 15 <= v; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on); });
+  const tm = rangee.closest('.g-row').querySelector('.tm');
+  tm.textContent = v ? fmt(v) : '0'; tm.classList.toggle('zero', !v);
+}
+$('grille').addEventListener('pointerdown', e => {
+  const rangee = e.target.closest('.g-row:not(.g-tete) .cases');
+  if (!rangee || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  const c = rangee.querySelector('.case');
+  glisse.etat = { id: e.pointerId, x0: e.clientX, y0: e.clientY, rangee, cle: c.dataset.d, v: S.log[c.dataset.d] || 0, actif: false };
+});
+$('grille').addEventListener('pointermove', e => {
+  const g = glisse.etat; if (!g || e.pointerId !== g.id) return;
+  const dx = e.clientX - g.x0, dy = e.clientY - g.y0;
+  if (!g.actif) {
+    if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { glisse.etat = null; return; }   // c'est un défilement
+    if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    g.actif = true;
+    try { g.rangee.setPointerCapture(e.pointerId) } catch (err) {}
+  }
+  e.preventDefault();
+  g.v = valeurSous(g.rangee, e.clientX);
+  montrerValeur(g.rangee, g.v);
+});
+function finGlisse(e) {
+  const g = glisse.etat; if (!g || e.pointerId !== g.id) return;
+  glisse.etat = null;
+  if (!g.actif) return;
+  if (e.type === 'pointercancel') { rendreGrille(); return; }
+  if (g.v) S.log[g.cle] = g.v; else delete S.log[g.cle];
+  modifie(); rendreGrille(); rendreGraphe();
+  glisse.ignorerClic = true; setTimeout(() => { glisse.ignorerClic = false; }, 50);
+}
+$('grille').addEventListener('pointerup', finGlisse);
+$('grille').addEventListener('pointercancel', finGlisse);
 $('sem-prec').addEventListener('click', () => { semVue = plusJ(semVue, -7); rendreGrille(); });
 $('sem-suiv').addEventListener('click', () => { semVue = plusJ(semVue, 7); rendreGrille(); });
 $('sem-auj').addEventListener('click', () => { semVue = lundi(AUJ); rendreGrille(); });
