@@ -378,6 +378,22 @@ dialog#accueil::backdrop,dialog#install::backdrop{background:rgb(10 15 25 / .45)
 .horloge-duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center}
 @media (max-width:520px){.horloge-duo{grid-template-columns:1fr}}
 .legende li .pc.j{min-width:44px}
+.regul{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:18px;align-items:center}
+@media (max-width:640px){.regul{grid-template-columns:1fr}}
+.series{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.serie{background:var(--surface-2);border-radius:12px;padding:12px 14px;display:grid;gap:2px}
+.serie b{font:800 30px/1 var(--f-display);display:flex;align-items:center;gap:6px}
+.serie b svg{color:var(--n4)}
+.serie.zero b{color:var(--faint)}.serie.zero b svg{color:var(--faint)}
+.serie span{font-size:12.5px;color:var(--muted)}
+.type{display:grid;gap:8px}
+.type-barres{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-items:end;height:96px}
+.type-barres div{display:grid;gap:4px;justify-items:center;align-self:end}
+.type-barres i{display:block;width:100%;max-width:34px;border-radius:6px 6px 3px 3px;background:var(--accent);opacity:.55;min-height:3px}
+.type-barres i.faible{background:var(--n4);opacity:1}
+.type-barres small{font-size:11px;color:var(--muted)}
+.type-noms{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;font-size:12px;font-weight:600}
+.type p{margin:0;font-size:13.5px}
 .obj-ligne{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;margin:-4px 0 12px}
 .obj-ligne .niveau{font-size:12.5px}
 .a-tete{display:flex;gap:12px;align-items:center}
@@ -521,6 +537,11 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
       </div>
       <div class="grille num" id="grille"></div>
       <div class="bilan-sem" id="bilan-sem"></div>
+    </div>
+
+    <div class="card">
+      <h2>Ma régularité <small>depuis le début de la session</small></h2>
+      <div class="regul" id="regul"></div>
     </div>
 
     <div class="card graphe">
@@ -1076,7 +1097,7 @@ function rendreGraphe() {
   });
   s += `<line x1="${g}" x2="${w - 8}" y1="${y(o)}" y2="${y(o)}" stroke="var(--fg)" stroke-width="2" stroke-dasharray="6 4"/>
         <text x="${w - 10}" y="${y(o) - 6}" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--fg)">Objectif ${fmt(o)}</text>`;
-  rendreHist(vals, o);
+  rendreHist(vals, o); rendreRegularite();
   $('graphe').setAttribute('viewBox', `0 0 ${w} ${h}`);
   $('graphe').innerHTML = s;
   const passees = vals.filter(v => !v.futur && !v.cur), faites = passees.filter(v => v.t);
@@ -1094,6 +1115,34 @@ function rendreGraphe() {
   const m3 = Math.max(prevu, o, moy, 1);
   const r = (nom, v, coul) => `<div class="r"><span>${nom}</span><div class="b"><div style="width:${v / m3 * 100}%;background:${coul}"></div></div><b>${fmt(v)}</b></div>`;
   $('trio').innerHTML = r('Prévu', prevu, 'var(--c-mus)') + r('Visé (objectif)', o, 'var(--fg)') + r('Réel (moyenne)', moy, moy >= o ? 'var(--ok)' : 'var(--accent)');
+}
+/* Régularité : séries à l'objectif et semaine type (moyenne par jour de la semaine) */
+const FLAMME = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 3.5 5 5.6 5 10.5A5 5 0 0 1 7 12.5c0-2 1-3.5 2.2-4.6.2 1.6 1 2.6 2 3.1C11 8 11.3 5 12 2z"/></svg>';
+function rendreRegularite() {
+  const obj = S.prat.min, lA = lundi(AUJ), objS = objSem();
+  // Jours de suite à l'objectif (aujourd'hui compte seulement s'il est déjà atteint)
+  let j = 0, d = (S.log[iso(AUJ)] || 0) >= obj ? AUJ : plusJ(AUJ, -1);
+  while ((S.log[iso(d)] || 0) >= obj && j < 400) { j++; d = plusJ(d, -1); }
+  // Semaines de suite à l'objectif (la semaine en cours compte si déjà atteinte)
+  let w = 0, l = totSem(lA) >= objS ? lA : plusJ(lA, -7);
+  while (totSem(l) >= objS && w < 60) { w++; l = plusJ(l, -7); }
+  // Semaine type : jours passés depuis le premier jour coché (ou le début), sans aujourd'hui
+  const cles = Object.keys(S.log).sort(), dep = cles.length ? deIso(cles[0]) : null;
+  const somme = Array(7).fill(0), nb = Array(7).fill(0);
+  if (dep) for (let x = new Date(dep); x < AUJ; x = plusJ(x, 1)) { const k = (x.getDay() + 6) % 7; somme[k] += S.log[iso(x)] || 0; nb[k]++; }
+  const moy = somme.map((t, k) => nb[k] ? t / nb[k] : 0), assez = nb.every(n => n >= 2);
+  const max = Math.max(...moy, 1), faible = moy.indexOf(Math.min(...moy)), fort = moy.indexOf(Math.max(...moy));
+  const serie = (n, txt) => `<div class="serie ${n ? '' : 'zero'}"><b>${FLAMME}${n}</b><span>${txt}</span></div>`;
+  $('regul').innerHTML = `<div class="series">
+      ${serie(j, `jour${j > 1 ? 's' : ''} de suite à ${fmt(obj)} ou plus`)}
+      ${serie(w, `semaine${w > 1 ? 's' : ''} de suite à l'objectif`)}
+    </div>
+    <div class="type">
+      ${assez ? `<div class="type-barres num">${moy.map((m, k) => `<div><small>${m ? fmt(m) : '0'}</small><i class="${k === faible ? 'faible' : ''}" style="height:${Math.round(m / max * 70)}px"></i></div>`).join('')}</div>
+        <div class="type-noms">${JOURS.map(n => `<span>${n.slice(0, 3)}</span>`).join('')}</div>
+        <p>Ta semaine type : tu pratiques le plus le <b>${JOURS[fort].toLowerCase()}</b>, et le moins le <b>${JOURS[faible].toLowerCase()}</b> (${fmt(moy[faible])} en moyenne).</p>`
+      : `<p class="note">Ta semaine type apparaîtra après 2 semaines de cases cochées : tu verras tes jours forts et ton jour faible.</p>`}
+    </div>`;
 }
 function rendreHist(vals, o) {
   const passees = vals.filter(v => !v.futur);
