@@ -16,7 +16,7 @@ def remplacer(s, a, b, n):
 for g in GROUPES:
     d = os.path.join(ICI, g); os.makedirs(d, exist_ok=True)
     s = remplacer(src, 'data-groupe=""', f'data-groupe="{g}"', 1)
-    s = remplacer(s, '"icones/', '"../icones/', 3)
+    s = remplacer(s, '"icones/', '"../icones/', 4)
     s = remplacer(s, "register('sw.js')", "register('../sw.js', { scope: '../' })", 1)
     s = '<!-- FICHIER GÉNÉRÉ par scripts/groupes.py : ne pas modifier, modifier ../index.html -->\n' + s
     open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(s)
