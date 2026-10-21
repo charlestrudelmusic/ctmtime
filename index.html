@@ -427,6 +427,9 @@ dialog#accueil::backdrop,dialog#install::backdrop{background:rgb(10 15 25 / .45)
 .a-niv button span{font-size:12.5px;font-weight:600}
 dialog#accueil{width:min(520px,calc(100% - 24px))}
 #a-sans{justify-self:start;margin-top:4px}
+#a-astuce{display:grid;gap:8px;margin:0}
+.a-geste{font-size:16px;color:var(--fg);line-height:1.5;background:var(--surface-2);border-radius:12px;padding:12px 14px}
+.a-camera{font-size:13px}
 .gros-btn{justify-self:stretch;padding:13px 18px;font-size:17px;gap:10px}
 .suivi-aide{flex-basis:100%;font-size:12.5px;color:var(--muted)}
 .suivi{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-top:14px;margin-top:14px;border-top:1px solid var(--line)}
@@ -1637,9 +1640,10 @@ function ouvrirAccueil() {
     $('a-install').hidden = false; $('a-infos').hidden = true;
     const android = estAndroid && !!promptInstall;
     $('a-partager').innerHTML = android ? 'Installer' : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Partager`;
-    $('a-partager').hidden = !(android || navigator.share);
+    $('a-partager').hidden = !android;
     $('a-astuce').innerHTML = android ? '' : estAndroid ? 'Touche <b>⋮</b> en haut à droite, puis <b>Installer l\'application</b>.'
-      : navigator.share ? 'Puis choisis <b>Sur l\'écran d\'accueil</b>.' : 'Touche <b>Partager</b> en bas de Safari, puis <b>Sur l\'écran d\'accueil</b>.';
+      : `<span class="a-geste">Dans Safari, touche <span class="icone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> <b>Partager</b> (parfois sous <b>⋯</b>), puis <b>Sur l'écran d'accueil</b>.</span>
+         <span class="a-camera">Ouvert avec la caméra ? Touche d'abord <b>Ouvrir dans Safari</b>.</span>`;
   } else etapeInfos();
   try { $('accueil').showModal() } catch (e) { $('accueil').setAttribute('open', '') }
 }
