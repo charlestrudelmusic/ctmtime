@@ -26,6 +26,7 @@
   --accent:#0f6f68; --accent-soft:#d8efec; --danger:#c8372d; --danger-soft:#fbe4e1;
   --ok:#1f9a62;
   --libre:#b9c2ce;
+  --barre:#ffffff; --barre-ligne:#c9d0da;
   --c-bes:#4767e6; --c-obl:#d9912b; --c-san:#22a575; --c-loi:#ec6a5e;
   --c-soc:#d6559e; --c-dep:#7d8ba0; --c-mus:#7c4ddb;
   /* Niveaux de pratique (couleurs du PDF « Pratique personnelle ») */
@@ -42,6 +43,7 @@
   --fg:#e7ecf2; --muted:#9aa6b5; --faint:#6f7b8a;
   --accent:#45c2b6; --accent-soft:#16332f; --danger:#ff7a6e; --danger-soft:#3a1d1b;
   --ok:#4fd093; --libre:#4a5563;
+  --barre:#262f3b; --barre-ligne:#3a4553;
   --c-bes:#6f8cff; --c-obl:#f0aa47; --c-san:#3cc48f; --c-loi:#ff8679;
   --c-soc:#ee74b8; --c-dep:#98a6ba; --c-mus:#9c74f2;
   --n1:#4fbfa6; --n1-soft:#1a2d29; --n2:#4fb0d6; --n2-soft:#172a33;
@@ -54,6 +56,7 @@
   --fg:#e7ecf2; --muted:#9aa6b5; --faint:#6f7b8a;
   --accent:#45c2b6; --accent-soft:#16332f; --danger:#ff7a6e; --danger-soft:#3a1d1b;
   --ok:#4fd093; --libre:#4a5563;
+  --barre:#262f3b; --barre-ligne:#3a4553;
   --c-bes:#6f8cff; --c-obl:#f0aa47; --c-san:#3cc48f; --c-loi:#ff8679;
   --c-soc:#ee74b8; --c-dep:#98a6ba; --c-mus:#9c74f2;
   --n1:#4fbfa6; --n1-soft:#1a2d29; --n2:#4fb0d6; --n2-soft:#172a33;
@@ -109,7 +112,7 @@ nav.onglets button.on{background:var(--surface);color:var(--accent);box-shadow:0
 nav.onglets svg{width:18px;height:18px;flex:none}
 @media (max-width:700px){
   body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
-  nav.onglets{position:fixed;top:auto;left:0;right:0;bottom:0;border-radius:0;border-width:1px 0 0;background:var(--surface);
+  nav.onglets{position:fixed;top:auto;left:0;right:0;bottom:0;border-radius:16px 16px 0 0;border-width:1px 0 0;border-color:var(--barre-ligne);background:var(--barre);box-shadow:0 -8px 24px rgb(0 0 0 / .28);
     padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
   nav.onglets button{flex-direction:column;gap:3px;font-size:11.5px;padding:6px 2px}
   nav.onglets button.on{box-shadow:none;background:var(--accent-soft)}
