@@ -282,9 +282,8 @@ input[type=range]{width:100%;accent-color:var(--accent);height:28px}
 .grille{display:grid;gap:4px;overflow-x:auto}
 .g-row{display:grid;grid-template-columns:86px minmax(0,1fr) 64px;gap:12px;align-items:center;padding:7px 6px;border-radius:10px}
 .g-row:not(.g-tete) + .g-row{border-top:1px solid var(--line);border-radius:0}
-.grille .g-row.auj{border-radius:12px;border-top-color:transparent;background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.grille .g-row.auj{border-radius:12px;border-top-color:transparent;box-shadow:inset 0 0 0 2px var(--accent)}
 .g-row.auj + .g-row{border-top-color:transparent}
-.auj-pill{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--accent);color:var(--surface);font-size:11.5px;font-weight:700;vertical-align:2px}
 .g-row .jour{font-weight:650;font-size:14px}
 .g-row .jour small{display:block;font-weight:500;color:var(--muted);font-size:12px}
 .g-row .tm{text-align:right;font:800 15px var(--f-display)}
@@ -428,7 +427,7 @@ dialog#accueil::backdrop,dialog#install::backdrop{background:rgb(10 15 25 / .45)
 .a-niv button span{font-size:12.5px;font-weight:600}
 dialog#accueil{width:min(520px,calc(100% - 24px))}
 #a-sans{justify-self:start;margin-top:4px}
-#a-partager{justify-self:start}
+.gros-btn{justify-self:stretch;padding:13px 18px;font-size:17px;gap:10px}
 .suivi-aide{flex-basis:100%;font-size:12.5px;color:var(--muted)}
 .suivi{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-top:14px;margin-top:14px;border-top:1px solid var(--line)}
 .suivi a.btn{text-decoration:none;color:var(--surface)}
@@ -663,21 +662,11 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
     <div class="a-tete"><img src="icones/icon-192.png" alt="" class="logo"><h2 id="accueil-t" class="grand">Bienvenue dans ctmTIME</h2></div>
     <p class="note" style="font-size:14.5px">Ton outil pour suivre ta pratique et voir où va ton temps. Tout reste sur ton appareil : rien n'est envoyé.</p>
     <div id="a-install" class="a-etape" hidden>
-      <b class="a-titre">D'abord : installe l'app sur ton écran d'accueil</b>
-      <button class="btn primary" type="button" id="a-partager" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Ouvrir le menu Partager</button>
-      <p class="note">Sur iPhone, c'est important : ce que tu entres dans Safari ne suit pas dans l'app installée. Installe-la, puis ouvre-la avec son icône.</p>
-      <div class="etapes" data-os="ios">
-        <b>iPhone (avec Safari)</b>
-        <ol><li>Touche <span class="icone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> <b>Partager</b>, en bas de l'écran.</li>
-          <li>Fais défiler et touche <b>Sur l'écran d'accueil</b>, puis <b>Ajouter</b>.</li>
-          <li>Ouvre <b>ctmTIME</b> avec sa nouvelle icône.</li></ol>
-      </div>
-      <div class="etapes" data-os="android">
-        <b>Android (avec Chrome)</b>
-        <ol><li>Touche <b>⋮</b> en haut à droite.</li><li>Touche <b>Installer l'application</b>, puis ouvre-la avec son icône.</li></ol>
-        <button class="btn primary" type="button" data-install id="a-android" hidden style="margin-top:10px">Installer maintenant</button>
-      </div>
-      <button class="lien" type="button" id="a-sans">Continuer sans installer</button>
+      <b class="a-titre">Installe ctmTIME sur ton téléphone</b>
+      <p class="note">Elle s'ouvrira comme une app, même sans Internet, et tes données seront protégées.</p>
+      <button class="btn primary gros-btn" type="button" id="a-partager"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Partager</button>
+      <p class="note" id="a-astuce"></p>
+      <button class="lien" type="button" id="a-sans">Plus tard</button>
     </div>
     <div id="a-infos" class="a-etape">
       <label class="a-titre" for="a-fin">Quand finit ta session ?</label>
@@ -1088,7 +1077,7 @@ function rendreGrille() {
         return `<button type="button" class="case ${on ? 'on' : ''}" style="--nfort:var(--n${v.n})" data-a="case" data-d="${k}" data-p="${pos}" aria-label="${JOURS[i]} : ${fmt(pos * 15)}" aria-pressed="${on}"></button>`;
       }).join('')}</div>`).join('');
     lignes += `<div class="g-row ${+d === +AUJ ? 'auj' : ''}">
-      <span class="jour">${JOURS[i]}${+d === +AUJ ? '<span class="auj-pill">Aujourd\'hui</span>' : ''}<small>${dCourt(d)}</small></span>
+      <span class="jour">${JOURS[i]}<small>${dCourt(d)}</small></span>
       <div class="cases">${cases}</div>
       <span class="tm ${m ? '' : 'zero'}">${m ? fmt(m) : '0'}</span></div>`;
   }
@@ -1613,10 +1602,7 @@ function rendreRappel() {
   const r = $('rappel'), plusTard = S.rappelApres && deIso(S.rappelApres) > AUJ;
   let msg = '', btn = '';
   if (plusTard || !S.accueilVu) { r.hidden = true; return; }
-  if (estTel() && !estInstalle()) {
-    msg = "Installe l'outil sur ton écran d'accueil : sur iPhone, c'est ce qui protège tes données.";
-    btn = `<button class="btn primary" type="button" data-install>Comment faire</button>`;
-  } else {
+  if (estTel() && !estInstalle()) { r.hidden = true; return; } else {
     const aDesDonnees = Object.keys(S.log).length || S.cats.some(c => c.acts.some(x => x.min));
     const depuis = joursDepuis(S.sauve), age = joursDepuis(S.cree || S.debut);
     if (aDesDonnees && (S.sauve ? depuis >= 30 : age >= 14)) {
@@ -1632,6 +1618,10 @@ $('rappel').addEventListener('click', e => {
   if (e.target.id === 'rappel-non') { S.rappelApres = iso(plusJ(AUJ, 7)); sauver(); rendreRappel(); }
 });
 
+function proposerInstall() {
+  let plusTard = false; try { plusTard = !!sessionStorage.getItem(CLE + '-plus-tard') } catch (e) {}
+  return estTel() && !estInstalle() && !plusTard;
+}
 /* ---------- Accueil (premier lancement) : installer d'abord, puis date de fin + objectif ---------- */
 let aNiv = 60;
 function etapeInfos() {
@@ -1642,17 +1632,23 @@ function etapeInfos() {
   $('a-go').disabled = !$('a-fin').value;
 }
 function ouvrirAccueil() {
-  const installerDabord = estTel() && !estInstalle();
+  const installerDabord = proposerInstall();
   if (installerDabord) {
     $('a-install').hidden = false; $('a-infos').hidden = true;
-    $('a-install').querySelectorAll('.etapes').forEach(el => el.hidden = (estIOS && el.dataset.os !== 'ios') || (estAndroid && el.dataset.os !== 'android'));
-    $('a-android').hidden = !promptInstall;
-    $('a-partager').hidden = !(estIOS && navigator.share);
+    const android = estAndroid && !!promptInstall;
+    $('a-partager').innerHTML = android ? 'Installer' : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Partager`;
+    $('a-partager').hidden = !(android || navigator.share);
+    $('a-astuce').innerHTML = android ? '' : estAndroid ? 'Touche <b>⋮</b> en haut à droite, puis <b>Installer l\'application</b>.'
+      : navigator.share ? 'Puis choisis <b>Sur l\'écran d\'accueil</b>.' : 'Touche <b>Partager</b> en bas de Safari, puis <b>Sur l\'écran d\'accueil</b>.';
   } else etapeInfos();
   try { $('accueil').showModal() } catch (e) { $('accueil').setAttribute('open', '') }
 }
-$('a-sans').addEventListener('click', etapeInfos);
+$('a-sans').addEventListener('click', () => {
+  try { sessionStorage.setItem(CLE + '-plus-tard', '1') } catch (e) {}
+  if (S.accueilVu) $('accueil').close(); else etapeInfos();
+});
 $('a-partager').addEventListener('click', () => {
+  if (estAndroid && promptInstall) { installer(); return; }
   navigator.share({ title: 'ctmTIME', url: location.href }).catch(() => {});
 });
 $('a-fin').addEventListener('input', () => { $('a-go').disabled = !$('a-fin').value; });
@@ -1680,7 +1676,7 @@ appliquerTheme();
 if (GROUPE) { $('groupe-pied').hidden = false; $('groupe-pied').textContent = 'Groupe : ' + (GROUPES[GROUPE] || GROUPE); }
 montrer(onglet);
 demarrer();
-if (!S.accueilVu) ouvrirAccueil();
+if (!S.accueilVu || proposerInstall()) ouvrirAccueil();
 
 /* Hors ligne : seulement quand la page est en ligne (pas en fichier local) */
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
