@@ -283,8 +283,9 @@ input[type=range]{width:100%;accent-color:var(--accent);height:28px}
 .grille{display:grid;gap:4px;overflow-x:auto}
 .g-row{display:grid;grid-template-columns:86px minmax(0,1fr) 64px;gap:12px;align-items:center;padding:7px 6px;border-radius:10px}
 .g-row:not(.g-tete) + .g-row{border-top:1px solid var(--line);border-radius:0}
-.g-row.auj{border-radius:10px}
-.g-row.auj{background:var(--accent-soft)}
+.grille .g-row.auj{border-radius:12px;border-top-color:transparent;background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.g-row.auj + .g-row{border-top-color:transparent}
+.auj-pill{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--accent);color:var(--surface);font-size:11.5px;font-weight:700;vertical-align:2px}
 .g-row .jour{font-weight:650;font-size:14px}
 .g-row .jour small{display:block;font-weight:500;color:var(--muted);font-size:12px}
 .g-row .tm{text-align:right;font:800 15px var(--f-display)}
@@ -1088,7 +1089,7 @@ function rendreGrille() {
         return `<button type="button" class="case ${on ? 'on' : ''}" style="--nfort:var(--n${v.n})" data-a="case" data-d="${k}" data-p="${pos}" aria-label="${JOURS[i]} : ${fmt(pos * 15)}" aria-pressed="${on}"></button>`;
       }).join('')}</div>`).join('');
     lignes += `<div class="g-row ${+d === +AUJ ? 'auj' : ''}">
-      <span class="jour">${JOURS[i]}<small>${dCourt(d)}</small></span>
+      <span class="jour">${JOURS[i]}${+d === +AUJ ? '<span class="auj-pill">Aujourd\'hui</span>' : ''}<small>${dCourt(d)}</small></span>
       <div class="cases">${cases}</div>
       <span class="tm ${m ? '' : 'zero'}">${m ? fmt(m) : '0'}</span></div>`;
   }
