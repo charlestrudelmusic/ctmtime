@@ -63,6 +63,7 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+html,button,input,select,a,label,.case{touch-action:manipulation}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 var(--f-body);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -267,14 +268,18 @@ input[type=range]{width:100%;accent-color:var(--accent);height:28px}
 .pastilles button{width:36px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);font-weight:700}
 .pastilles button.on{background:var(--accent);border-color:var(--accent);color:var(--surface)}
 
-.semnav{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.semnav{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin-bottom:10px;text-align:center}
+.sn-t .lien{font-size:13px;margin-top:2px}
+.bas-grille{display:flex;justify-content:flex-end;margin-top:10px}
 .semnav .t{font:700 16px var(--f-display)}
 .semnav .fl{display:flex;gap:6px}
 .rond{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;padding:0}
 .rond:hover{border-color:var(--accent);color:var(--accent)}
 .rond:disabled{opacity:.35;cursor:default}
 .grille{display:grid;gap:4px;overflow-x:auto}
-.g-row{display:grid;grid-template-columns:86px minmax(0,1fr) 64px;gap:12px;align-items:center;padding:5px 6px;border-radius:10px}
+.g-row{display:grid;grid-template-columns:86px minmax(0,1fr) 64px;gap:12px;align-items:center;padding:7px 6px;border-radius:10px}
+.g-row:not(.g-tete) + .g-row{border-top:1px solid var(--line);border-radius:0}
+.g-row.auj{border-radius:10px}
 .g-row.auj{background:var(--accent-soft)}
 .g-row .jour{font-weight:650;font-size:14px}
 .g-row .jour small{display:block;font-weight:500;color:var(--muted);font-size:12px}
@@ -331,6 +336,17 @@ footer.pied{color:var(--faint);font-size:12.5px;text-align:center;display:flex;g
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:20;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .entete-act{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:700px){
+  header.top{flex-wrap:nowrap;gap:10px}
+  .brand{gap:10px;min-width:0}
+  .brand .logo{width:38px;height:38px;border-radius:10px}
+  h1{font-size:22px}
+  .brand p{display:none}
+  .entete-act{flex-wrap:nowrap}
+  .entete-act .btn{padding:7px 11px}
+  #b-theme .txt{display:none}
+  .wrap{padding-block:12px 32px;gap:14px}
+}
 .imp-tete{display:none}
 dialog#envoi{border:0;border-radius:18px;padding:0;background:var(--surface);color:var(--fg);box-shadow:0 20px 60px rgb(0 0 0 / .3);width:min(520px,calc(100% - 32px));max-height:calc(100% - 32px)}
 dialog#envoi::backdrop{background:rgb(10 15 25 / .45)}
@@ -395,7 +411,7 @@ dialog#accueil::backdrop,dialog#install::backdrop{background:rgb(10 15 25 / .45)
 .type-barres small{font-size:11px;color:var(--muted)}
 .type-noms{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;font-size:12px;font-weight:600}
 .type p{margin:0;font-size:13.5px}
-.obj-ligne{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;margin:-4px 0 12px}
+.obj-ligne{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;margin-top:12px}
 .obj-ligne .niveau{font-size:12.5px}
 .a-tete{display:flex;gap:12px;align-items:center}
 .a-tete .logo{width:44px;height:44px;border-radius:11px}
@@ -404,7 +420,7 @@ dialog#accueil::backdrop,dialog#install::backdrop{background:rgb(10 15 25 / .45)
 .a-niv button{width:auto;padding:0 12px}
 #a-sans{justify-self:start;margin-top:4px}
 .suivi-aide{flex-basis:100%;font-size:12.5px;color:var(--muted)}
-.suivi{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.suivi{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-top:14px;margin-top:14px;border-top:1px solid var(--line)}
 .suivi a.btn{text-decoration:none;color:var(--surface)}
 .suivi .champ{flex:1 1 260px;width:auto}
 .bas-cat{display:flex;gap:8px;margin:4px 8px 0}
@@ -425,13 +441,14 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{
   body{background:#fff;padding:0}
-  nav.onglets,.ajout,.suppr,.duree button,.aide,.toast,.exemple,.outils,.entete-act,.semnav .fl,.info,.bas-cat,.raz-page,.rappel,.suivi,dialog,#sem-raz,.semnav .sous{display:none!important}
+  nav.onglets,.ajout,.suppr,.duree button,.aide,.toast,.exemple,.outils,.entete-act,.semnav .rond,.sn-t .lien,.bas-grille,.info,.bas-cat,.raz-page,.rappel,.suivi,dialog,#sem-raz,.semnav .sous{display:none!important}
   body.imp-pratique #p-semaine,body.imp-pratique #p-bilan,body.imp-pratique #p-objectifs,body.imp-pratique .periode,body.imp-semaine #p-pratique{display:none!important}
   .imp-tete{display:flex!important;justify-content:space-between;align-items:baseline;border-bottom:2px solid #000;padding-bottom:6px;font-size:13px}
   .imp-tete b{font-size:18px}
   header.top .brand p{display:none}
   .hist-wrap{overflow:visible}
   .panel[hidden]{display:grid!important}
+  .periode[hidden]{display:flex!important}
   .panel{break-before:page}
   .main{grid-template-columns:1fr 300px}
   .card,details.cat,.periode{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
@@ -453,7 +470,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
     </div>
   </header>
 
-  <div class="periode">
+  <div class="periode" id="periode">
     <div><label for="debut">Début de la session</label><input type="date" id="debut"></div>
     <div><label for="fin">Fin de la session</label><input type="date" id="fin"></div>
     <div class="stats num" id="stats"></div>
@@ -525,19 +542,17 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
   <!-- ============ PRATIQUE ============ -->
   <section class="panel" id="p-pratique" role="tabpanel" hidden>
     <div class="card">
-      <div class="suivi" id="suivi"></div>
-      <div class="obj-ligne num" id="obj-ligne"></div>
       <div class="semnav">
-        <div><div class="t num" id="sem-titre"></div><div class="sous">1 case = 15 minutes. Touche la dernière case faite ; touche-la encore pour l'enlever.</div></div>
-        <div class="fl">
-          <button class="rond" type="button" id="sem-prec" aria-label="Semaine précédente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
-          <button class="btn" type="button" id="sem-auj">Cette semaine</button>
-          <button class="btn ghost" type="button" id="sem-raz">Effacer la semaine</button>
-          <button class="rond" type="button" id="sem-suiv" aria-label="Semaine suivante"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        </div>
+        <button class="rond" type="button" id="sem-prec" aria-label="Semaine précédente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <div class="sn-t"><div class="t num" id="sem-titre"></div><div class="sous">1 case = 15 min · touche-la encore pour l'enlever</div>
+          <button class="lien" type="button" id="sem-auj" hidden>Revenir à cette semaine</button></div>
+        <button class="rond" type="button" id="sem-suiv" aria-label="Semaine suivante"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
       </div>
       <div class="grille num" id="grille"></div>
       <div class="bilan-sem" id="bilan-sem"></div>
+      <div class="obj-ligne num" id="obj-ligne"></div>
+      <div class="suivi" id="suivi"></div>
+      <div class="bas-grille"><button class="btn ghost" type="button" id="sem-raz">Effacer la semaine</button></div>
     </div>
 
     <div class="card">
@@ -1051,7 +1066,7 @@ function rendreNiveaux() {
 function rendreGrille() {
   const l = semVue, dim = plusJ(l, 6);
   $('sem-titre').textContent = `Semaine du ${dLong(l)} au ${dLong(dim)}`;
-  $('sem-auj').disabled = +l === +lundi(AUJ);
+  $('sem-auj').hidden = +l === +lundi(AUJ);
   const tete = `<div class="g-row g-tete"><span></span><div class="cases">${NIVEAUX.map(v =>
       `<div class="groupe-t" style="--nsoft:var(--n${v.n}-soft)"><b>${v.nom}</b>${v.min / 60} h</div>`).join('')}</div><span class="sous" style="text-align:right">Total</span></div>`;
   let lignes = '';
@@ -1206,6 +1221,7 @@ function montrer(t) {
   onglet = t;
   document.querySelectorAll('nav.onglets button').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   document.querySelectorAll('.panel[id^="p-"]').forEach(p => p.hidden = p.id !== 'p-' + t);
+  $('periode').hidden = !(t === 'semaine' || t === 'bilan');
   try { localStorage.setItem(CLE + '-onglet', t); history.replaceState(null, '', '#' + t) } catch (e) {}
 }
 document.addEventListener('click', e => {
@@ -1510,7 +1526,7 @@ function appliquerTheme() {
   if (theme === 'auto') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', theme);
   const [nom, ic] = THEMES[theme];
-  $('b-theme').innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg>${nom}`;
+  $('b-theme').innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><span class="txt">${nom}</span>`;
 }
 $('b-theme').addEventListener('click', () => {
   theme = { auto: 'dark', dark: 'light', light: 'auto' }[theme];
