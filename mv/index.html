@@ -664,10 +664,10 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
 <dialog id="accueil" aria-labelledby="accueil-t">
   <form method="dialog" class="envoi" id="accueil-f">
     <div class="a-tete"><img src="../icones/icon-192.png" alt="" class="logo"><h2 id="accueil-t" class="grand">Bienvenue dans ctmTIME</h2></div>
-    <p class="note" style="font-size:14.5px">Ton outil pour suivre ta pratique et voir où va ton temps. Tout reste sur ton appareil : rien n'est envoyé.</p>
+    <p class="note" style="font-size:14.5px">Ton outil pour suivre ta pratique et voir où va ton temps. Tout reste privé, sur ton appareil.</p>
     <div id="a-install" class="a-etape" hidden>
       <b class="a-titre">Installe ctmTIME sur ton téléphone</b>
-      <p class="note">Elle s'ouvrira comme une app, même sans Internet, et tes données seront protégées.</p>
+      <p class="note">Comme une app, même sans internet, tes données sont protégées.</p>
       <button class="btn primary gros-btn" type="button" id="a-partager"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Partager</button>
       <p class="note" id="a-astuce"></p>
       <button class="lien" type="button" id="a-sans">Plus tard</button>
@@ -1643,8 +1643,7 @@ function ouvrirAccueil() {
     $('a-partager').innerHTML = android ? 'Installer' : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Partager`;
     $('a-partager').hidden = !android;
     $('a-astuce').innerHTML = android ? '' : estAndroid ? 'Touche <b>⋮</b> en haut à droite, puis <b>Installer l\'application</b>.'
-      : `<span class="a-geste">Dans Safari, touche <span class="icone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> <b>Partager</b> (parfois sous <b>⋯</b>), puis <b>Sur l'écran d'accueil</b>.</span>
-         <span class="a-camera">Ouvert avec la caméra ? Touche d'abord <b>Ouvrir dans Safari</b>.</span>`;
+      : `<span class="a-geste">Dans Safari, touche <span class="icone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> <b>Partager</b>, puis <b>« Ajouter à l'écran d'accueil »</b>.</span>`;
   } else etapeInfos();
   try { $('accueil').showModal() } catch (e) { $('accueil').setAttribute('open', '') }
 }

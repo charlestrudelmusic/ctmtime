@@ -2,7 +2,7 @@
    La page est d'abord demandée au réseau (pour recevoir les mises à jour),
    puis à la copie gardée sur l'appareil si Internet ne répond pas.
    Changer VERSION à chaque mise en ligne. */
-const VERSION = 'ctmtime-12';
+const VERSION = 'ctmtime-13';
 const FICHIERS = ['./', './index.html', './manifest.webmanifest', './joliette/', './mv/',
   './icones/icon-192.png', './icones/icon-512.png', './icones/icon-maskable-512.png', './icones/apple-touch-icon.png', './icones/favicon-32.png'];
 
