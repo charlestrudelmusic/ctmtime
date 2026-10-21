@@ -356,7 +356,8 @@ dialog#envoi::backdrop{background:rgb(10 15 25 / .45)}
 .envoi{display:grid;gap:10px;padding:20px 22px}
 .envoi-haut{display:flex;justify-content:space-between;align-items:center}
 .envoi-haut h2{font:700 20px var(--f-display);margin:0}
-.champ{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:9px 12px;width:100%}
+.champ{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:9px 12px;width:100%;max-width:100%;min-width:0}
+input[type=date].champ{display:block;min-height:46px;-webkit-appearance:none;appearance:none;font-weight:600;text-align:left}
 .champ:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .quoi{display:grid;gap:6px}
 .quoi label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer}
@@ -420,8 +421,13 @@ dialog#accueil::backdrop,dialog#install::backdrop{background:rgb(10 15 25 / .45)
 .a-tete .logo{width:44px;height:44px;border-radius:11px}
 .a-etape{display:grid;gap:8px}
 .a-titre{font:700 16px var(--f-display);display:block}
-.a-niv button{width:auto;padding:0 12px}
+.pastilles.a-niv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.a-niv button{width:auto;height:auto;padding:9px 8px;line-height:1.2;display:grid;gap:2px}
+.a-niv button b{font:800 18px var(--f-display)}
+.a-niv button span{font-size:12.5px;font-weight:600}
+dialog#accueil{width:min(520px,calc(100% - 24px))}
 #a-sans{justify-self:start;margin-top:4px}
+#a-partager{justify-self:start}
 .suivi-aide{flex-basis:100%;font-size:12.5px;color:var(--muted)}
 .suivi{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-top:14px;margin-top:14px;border-top:1px solid var(--line)}
 .suivi a.btn{text-decoration:none;color:var(--surface)}
@@ -547,7 +553,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
     <div class="card">
       <div class="semnav">
         <button class="rond" type="button" id="sem-prec" aria-label="Semaine précédente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
-        <div class="sn-t"><div class="t num" id="sem-titre"></div><div class="sous">1 case = 15 min · touche une case, ou glisse le doigt sur la ligne</div>
+        <div class="sn-t"><div class="t num" id="sem-titre"></div>
           <button class="lien" type="button" id="sem-auj" hidden>Revenir à cette semaine</button></div>
         <button class="rond" type="button" id="sem-suiv" aria-label="Semaine suivante"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
       </div>
@@ -657,6 +663,7 @@ table.hist-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520p
     <p class="note" style="font-size:14.5px">Ton outil pour suivre ta pratique et voir où va ton temps. Tout reste sur ton appareil : rien n'est envoyé.</p>
     <div id="a-install" class="a-etape" hidden>
       <b class="a-titre">D'abord : installe l'app sur ton écran d'accueil</b>
+      <button class="btn primary" type="button" id="a-partager" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Ouvrir le menu Partager</button>
       <p class="note">Sur iPhone, c'est important : ce que tu entres dans Safari ne suit pas dans l'app installée. Installe-la, puis ouvre-la avec son icône.</p>
       <div class="etapes" data-os="ios">
         <b>iPhone (avec Safari)</b>
@@ -1218,14 +1225,13 @@ function poser(k, min) {
 
 /* ---------- Onglets ---------- */
 let onglet = 'pratique';
-try { onglet = (location.hash.slice(1) || localStorage.getItem(CLE + '-onglet') || 'pratique') } catch (e) {}
 function montrer(t) {
   if (!$('p-' + t)) t = 'pratique';
   onglet = t;
   document.querySelectorAll('nav.onglets button').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   document.querySelectorAll('.panel[id^="p-"]').forEach(p => p.hidden = p.id !== 'p-' + t);
   $('periode').hidden = !(t === 'semaine' || t === 'bilan');
-  try { localStorage.setItem(CLE + '-onglet', t); history.replaceState(null, '', '#' + t) } catch (e) {}
+  try { history.replaceState(null, '', location.pathname) } catch (e) {}
 }
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (!g) return;
@@ -1631,7 +1637,7 @@ function etapeInfos() {
   $('a-install').hidden = true; $('a-infos').hidden = false;
   $('a-fin').value = S.fin || '';
   aNiv = S.prat.min || 60;
-  $('a-niv').innerHTML = NIVEAUX.map(v => `<button type="button" data-aniv="${v.min}" class="${aNiv === v.min ? 'on' : ''}">${v.min / 60} h · ${esc(v.nom)}</button>`).join('');
+  $('a-niv').innerHTML = NIVEAUX.map(v => `<button type="button" data-aniv="${v.min}" class="${aNiv === v.min ? 'on' : ''}"><b>${v.min / 60} h</b><span>${esc(v.nom)}</span></button>`).join('');
   $('a-go').disabled = !$('a-fin').value;
 }
 function ouvrirAccueil() {
@@ -1640,10 +1646,14 @@ function ouvrirAccueil() {
     $('a-install').hidden = false; $('a-infos').hidden = true;
     $('a-install').querySelectorAll('.etapes').forEach(el => el.hidden = (estIOS && el.dataset.os !== 'ios') || (estAndroid && el.dataset.os !== 'android'));
     $('a-android').hidden = !promptInstall;
+    $('a-partager').hidden = !(estIOS && navigator.share);
   } else etapeInfos();
   try { $('accueil').showModal() } catch (e) { $('accueil').setAttribute('open', '') }
 }
 $('a-sans').addEventListener('click', etapeInfos);
+$('a-partager').addEventListener('click', () => {
+  navigator.share({ title: 'ctmTIME', url: location.href }).catch(() => {});
+});
 $('a-fin').addEventListener('input', () => { $('a-go').disabled = !$('a-fin').value; });
 $('a-niv').addEventListener('click', e => {
   const b = e.target.closest('[data-aniv]'); if (!b) return;
